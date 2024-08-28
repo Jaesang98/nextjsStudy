@@ -182,3 +182,65 @@
 	=> 이런식으로 바꿀 것의 고유값과 바뀌는것을 덮어써버릴 값을 $set에 넣어줘야한다
 
 	만약 덮어쓰는게 아닌 +1 등으로 값을 가볍게 올리는거면 $inc를 사용하면 된다
+
+
+## part 2-10 삭제기능 만들기 1 (Ajax)
+	1. 자식이 데이터를 받는 방법
+		1) 부모가 props로 전달
+		2) 그냥 서버에 요청해서 데이터를 가져옴 
+			=> 구조가 복잡해지면 이게 편함
+
+	2. 서버요청
+		1) form은 서버컴포넌트에서 서버요청을 위한것
+
+		2) client에서는 ajax를 사용
+			- 1 GET
+				<span onClick={() => {
+					fetch('/api/test').then(()=> {
+						console.log("A")
+					})
+				}}>삭제</span>
+			
+			- 2 POST PUT DELETE
+				fetch('/api/test', {
+					method: 'POST' or 'PUT' or 'DELETE',
+					body : JSON.stringify(데이터)
+				})
+
+
+## part 2-11 삭제기능 만들기 2 (Ajax 추가내용과 에러처리)
+	1. 클라이언트 컴포넌트에서 서버 컴포넌트에 body값 보낼때
+		문자는 그냥 보내도 되지만 json일 경우 json.stringfy 이렇게 보내야함
+		그 후 서버에서 받을 떄는 JSON.parse(요청.body) 이렇게 받아야 json처럼 사용가능
+
+	2. 가끔 Delete가 안먹을떄는 post도 ㄱㅊ
+
+	3. 서버에서 쓴 status값 같은거 확인할 때
+		fetch('/api/post/delete', {
+			method: 'DELETE',
+			body: item._id
+		}).then((r) => {
+			if (r.status == 200) {
+				return r.json()
+			} else {
+				//서버가 에러코드전송시 실행할코드
+			}
+		}).then((result) => {
+			//성공시 실행할코드
+		}).catch((error) => {
+			//인터넷문제 등으로 실패시 실행할코드
+			console.log(error)
+		})
+		=> 이 형식 외우기
+
+
+## part 2-12 삭제기능 만들기 3 (query string / URL parameter)
+	1. query string 
+		서버에 url에 파라미터까지 전부 담아서 보낼 경우
+		/api/test?a=10 이딴식으로 했을 떄
+		요청.query로 객체형식으로 받을 수 있음
+
+	2. URL parameter
+		api폴더에 [이름].js 이렇게 폴더를 만들면
+		그 서버에서는 요청.query이렇게 받을 수 있음
+		클라이이언트에서는 그냥 /폴더/내가 보낼데이터 이렇게하면 됨
